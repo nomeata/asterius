@@ -30,4 +30,4 @@ mv ../.appveyor/build.mk mk/
 ./boot
 ./configure --enable-tarballs-autodownload
 make -j5
-XZ_OPT=-0 make binary-dist
+XZ_OPT=-1 make binary-dist
