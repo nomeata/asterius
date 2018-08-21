@@ -74,7 +74,6 @@ runHaskell Config {..} targets =
             dflags'
               { ghcMode = CompManager
               , ghcLink = NoLink
-              , integerLibrary = IntegerSimple
               , tablesNextToCode = False
               , hooks = h
               }
@@ -121,7 +120,6 @@ runCmm Config {..} cmm_fns =
             dflags'
               { ghcMode = OneShot
               , ghcLink = NoLink
-              , integerLibrary = IntegerSimple
               , tablesNextToCode = False
               , hooks = h
               }

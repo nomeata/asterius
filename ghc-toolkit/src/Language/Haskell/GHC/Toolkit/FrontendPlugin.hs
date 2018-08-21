@@ -29,22 +29,14 @@ makeFrontendPlugin init_c =
                 void $
                   setSessionDynFlags
                     dflags
-                      { ghcLink = NoLink
-                      , integerLibrary = IntegerSimple
-                      , tablesNextToCode = False
-                      , hooks = h
-                      }
+                      {ghcLink = NoLink, tablesNextToCode = False, hooks = h}
                 env <- getSession
                 liftIO $ oneShot env StopLn targets
               else do
                 do dflags <- getSessionDynFlags
                    void $
                      setSessionDynFlags
-                       dflags
-                         { integerLibrary = IntegerSimple
-                         , tablesNextToCode = False
-                         , hooks = h
-                         }
+                       dflags {tablesNextToCode = False, hooks = h}
                 env <- getSession
                 o_files <-
                   liftIO $ traverse (compileFile env StopLn) non_hs_targets

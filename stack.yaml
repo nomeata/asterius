@@ -1,5 +1,12 @@
 resolver: ghc-8.7
 allow-newer: true
+flags:
+  hashable:
+    integer-gmp: false
+  integer-logarithms:
+    integer-gmp: false
+  scientific:
+    integer-simple: true
 extra-deps:
   - ansi-terminal-0.8.0.4
   - ansi-wl-pprint-0.6.8.2
@@ -33,4 +40,4 @@ setup-info:
         url: https://ci.appveyor.com/api/buildjobs/mlrtwky0nd41m3y7/artifacts/ghc/ghc-8.7.20180821-x86_64-unknown-mingw32.tar.xz
     linux64:
       8.7.20180821:
-        url: https://1548-111412813-gh.circle-artifacts.com/0/tmp/ghc-bindist/ghc-8.7.20180821-x86_64-unknown-linux.tar.xz
+        url: https://1554-111412813-gh.circle-artifacts.com/0/tmp/ghc-bindist/ghc-8.7.20180821-x86_64-unknown-linux.tar.xz
