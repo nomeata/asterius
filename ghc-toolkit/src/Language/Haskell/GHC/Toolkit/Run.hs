@@ -75,7 +75,6 @@ runHaskell Config {..} targets =
               { ghcMode = CompManager
               , ghcLink = NoLink
               , integerLibrary = IntegerSimple
-              , tablesNextToCode = False
               , hooks = h
               }
         traverse (`guessTarget` Nothing) targets >>= setTargets
@@ -122,7 +121,6 @@ runCmm Config {..} cmm_fns =
               { ghcMode = OneShot
               , ghcLink = NoLink
               , integerLibrary = IntegerSimple
-              , tablesNextToCode = False
               , hooks = h
               }
         env <- getSession

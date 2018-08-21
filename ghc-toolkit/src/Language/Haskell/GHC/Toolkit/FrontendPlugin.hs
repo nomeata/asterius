@@ -31,7 +31,6 @@ makeFrontendPlugin init_c =
                     dflags
                       { ghcLink = NoLink
                       , integerLibrary = IntegerSimple
-                      , tablesNextToCode = False
                       , hooks = h
                       }
                 env <- getSession
@@ -40,11 +39,7 @@ makeFrontendPlugin init_c =
                 do dflags <- getSessionDynFlags
                    void $
                      setSessionDynFlags
-                       dflags
-                         { integerLibrary = IntegerSimple
-                         , tablesNextToCode = False
-                         , hooks = h
-                         }
+                       dflags {integerLibrary = IntegerSimple, hooks = h}
                 env <- getSession
                 o_files <-
                   liftIO $ traverse (compileFile env StopLn) non_hs_targets
