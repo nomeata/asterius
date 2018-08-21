@@ -1,13 +1,13 @@
 version: 2
 
 jobs:
-  build:
+  vanilla:
     resource_class: xlarge
     docker:
       - image: ubuntu:bionic
     environment:
       DEBIAN_FRONTEND: noninteractive
-      GHC_REV: e2db2d5fec79086cf18dd1910ca9dc416cd7afc6
+      GHC_REV: 9c4e6c6b1affd410604f8f76ecf56abfcc5cccb6
       JOBS: 9
       XZ_OPT: -9
     steps:
@@ -65,3 +65,55 @@ jobs:
             mv *.tar.* /tmp/ghc-bindist/
       - store_artifacts:
           path: /tmp/ghc-bindist
+
+  lambda:
+    resource_class: xlarge
+    docker:
+      - image: lambci/lambda:build-nodejs8.10
+    environment:
+      GHC_REV: 9c4e6c6b1affd410604f8f76ecf56abfcc5cccb6
+      JOBS: 9
+      XZ_OPT: -9
+    steps:
+      - run:
+          name: Install dependencies
+          command: |
+            yum -y install ncurses-devel
+            mkdir -p ~/.local/bin
+            export PATH=~/.local/bin:$PATH
+            curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+            stack --no-terminal --resolver nightly install \
+              alex \
+              happy
+      - run:
+          name: Initialize ghc repo
+          command: |
+            mkdir /tmp/ghc-git
+            cd /tmp/ghc-git
+            git clone git://git.haskell.org/ghc.git
+            cd ghc
+            git checkout $GHC_REV
+            git submodule update --init --recursive
+      - checkout
+      - run:
+          name: Compile GHC
+          no_output_timeout: 1h
+          command: |
+            export PATH=~/.local/bin:$(~/.local/bin/stack path --compiler-bin):$PATH
+            cp .circleci/build-lambda.mk /tmp/ghc-git/ghc/mk/build.mk
+            cd /tmp/ghc-git/ghc
+            ./boot
+            ./configure --prefix=/tmp/ghc
+            make -j$JOBS
+            make install
+            cd /tmp
+            tar cfJ ghc.tar.xz ghc
+      - store_artifacts:
+          path: /tmp/ghc.tar.xz
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - vanilla
+      - lambda
