@@ -1,3 +1,4 @@
+GhcEnableTablesNextToCode = NO
 SRC_HC_OPTS               = -O -H64m
 GhcStage1HcOpts           = -O
 GhcStage2HcOpts           = -O
