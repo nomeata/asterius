@@ -12,6 +12,7 @@ module Language.Haskell.GHC.Toolkit.Run
   , runCmm
   ) where
 
+import Config
 import Control.Exception
 import Control.Monad.IO.Class
 import Data.Functor
@@ -70,7 +71,13 @@ runHaskell Config {..} targets =
             pure (h, liftIO $ readIORef mod_map_ref)
         void $
           setSessionDynFlags
-            dflags' {ghcMode = CompManager, ghcLink = NoLink, hooks = h}
+            dflags'
+              { ghcMode = CompManager
+              , ghcLink = NoLink
+              , integerLibrary = IntegerSimple
+              , tablesNextToCode = False
+              , hooks = h
+              }
         traverse (`guessTarget` Nothing) targets >>= setTargets
         ok_flag <- load LoadAllTargets
         case ok_flag of
@@ -111,7 +118,13 @@ runCmm Config {..} cmm_fns =
             pure (h, reverse <$> readIORef cmm_irs_ref)
         void $
           setSessionDynFlags
-            dflags' {ghcMode = OneShot, ghcLink = NoLink, hooks = h}
+            dflags'
+              { ghcMode = OneShot
+              , ghcLink = NoLink
+              , integerLibrary = IntegerSimple
+              , tablesNextToCode = False
+              , hooks = h
+              }
         env <- getSession
         liftIO $ do
           oneShot env StopLn [(cmm_fn, Just CmmCpp) | cmm_fn <- cmm_fns]
