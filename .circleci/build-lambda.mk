@@ -1,3 +1,4 @@
+GhcEnableTablesNextToCode = NO
 WITH_TERMINFO             = NO
 DYNAMIC_BY_DEFAULT        = NO
 DYNAMIC_GHC_PROGRAMS      = NO
