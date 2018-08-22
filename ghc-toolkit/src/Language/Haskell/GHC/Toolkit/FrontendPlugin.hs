@@ -11,6 +11,7 @@ import GHC
 import GhcPlugins hiding ((<>))
 import Language.Haskell.GHC.Toolkit.Compiler
 import Language.Haskell.GHC.Toolkit.Hooks
+import Language.Haskell.GHC.Toolkit.Workarounds
 import Panic
 
 makeFrontendPlugin :: Ghc Compiler -> FrontendPlugin
@@ -30,28 +31,11 @@ makeFrontendPlugin init_c =
                   setSessionDynFlags
                     dflags
                       { ghcLink = NoLink
-                      , settings =
-                          (settings dflags)
-                            { sPgm_c =
-                                ( fst (sPgm_c (settings dflags))
-                                , filter
-                                    (/= Option "-DTABLES_NEXT_TO_CODE")
-                                    (snd (sPgm_c (settings dflags))))
-                            , sPgm_a =
-                                ( fst (sPgm_a (settings dflags))
-                                , filter
-                                    (/= Option "-DTABLES_NEXT_TO_CODE")
-                                    (snd (sPgm_a (settings dflags))))
-                            , sPgm_l =
-                                ( fst (sPgm_l (settings dflags))
-                                , filter
-                                    (/= Option "-DTABLES_NEXT_TO_CODE")
-                                    (snd (sPgm_l (settings dflags))))
-                            }
                       , integerLibrary = IntegerSimple
                       , tablesNextToCode = False
                       , hooks = h
                       }
+                forceNoTablesNextToCode
                 env <- getSession
                 liftIO $ oneShot env StopLn targets
               else do
@@ -59,25 +43,7 @@ makeFrontendPlugin init_c =
                    void $
                      setSessionDynFlags
                        dflags
-                         { settings =
-                             (settings dflags)
-                               { sPgm_c =
-                                   ( fst (sPgm_c (settings dflags))
-                                   , filter
-                                       (/= Option "-DTABLES_NEXT_TO_CODE")
-                                       (snd (sPgm_c (settings dflags))))
-                               , sPgm_a =
-                                   ( fst (sPgm_a (settings dflags))
-                                   , filter
-                                       (/= Option "-DTABLES_NEXT_TO_CODE")
-                                       (snd (sPgm_a (settings dflags))))
-                               , sPgm_l =
-                                   ( fst (sPgm_l (settings dflags))
-                                   , filter
-                                       (/= Option "-DTABLES_NEXT_TO_CODE")
-                                       (snd (sPgm_l (settings dflags))))
-                               }
-                         , integerLibrary = IntegerSimple
+                         { integerLibrary = IntegerSimple
                          , tablesNextToCode = False
                          , hooks = h
                          }
@@ -92,6 +58,7 @@ makeFrontendPlugin init_c =
                       , ldInputs =
                           map (FileOption "") o_files ++ ldInputs dflags
                       }
+                forceNoTablesNextToCode
                 traverse (uncurry GHC.guessTarget) hs_targets >>= setTargets
                 ok_flag <- load LoadAllTargets
                 when (failed ok_flag) $

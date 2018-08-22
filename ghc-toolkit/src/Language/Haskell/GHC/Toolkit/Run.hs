@@ -25,6 +25,7 @@ import GHC
 import qualified Language.Haskell.GHC.Toolkit.BuildInfo as BI
 import Language.Haskell.GHC.Toolkit.Compiler
 import Language.Haskell.GHC.Toolkit.Hooks
+import Language.Haskell.GHC.Toolkit.Workarounds
 import Panic
 import System.Directory
 import System.Environment
@@ -74,28 +75,11 @@ runHaskell Config {..} targets =
             dflags'
               { ghcMode = CompManager
               , ghcLink = NoLink
-              , settings =
-                  (settings dflags')
-                    { sPgm_c =
-                        ( fst (sPgm_c (settings dflags'))
-                        , filter
-                            (/= Option "-DTABLES_NEXT_TO_CODE")
-                            (snd (sPgm_c (settings dflags'))))
-                    , sPgm_a =
-                        ( fst (sPgm_a (settings dflags'))
-                        , filter
-                            (/= Option "-DTABLES_NEXT_TO_CODE")
-                            (snd (sPgm_a (settings dflags'))))
-                    , sPgm_l =
-                        ( fst (sPgm_l (settings dflags'))
-                        , filter
-                            (/= Option "-DTABLES_NEXT_TO_CODE")
-                            (snd (sPgm_l (settings dflags'))))
-                    }
               , integerLibrary = IntegerSimple
               , tablesNextToCode = False
               , hooks = h
               }
+        forceNoTablesNextToCode
         traverse (`guessTarget` Nothing) targets >>= setTargets
         ok_flag <- load LoadAllTargets
         case ok_flag of
@@ -139,28 +123,11 @@ runCmm Config {..} cmm_fns =
             dflags'
               { ghcMode = OneShot
               , ghcLink = NoLink
-              , settings =
-                  (settings dflags')
-                    { sPgm_c =
-                        ( fst (sPgm_c (settings dflags'))
-                        , filter
-                            (/= Option "-DTABLES_NEXT_TO_CODE")
-                            (snd (sPgm_c (settings dflags'))))
-                    , sPgm_a =
-                        ( fst (sPgm_a (settings dflags'))
-                        , filter
-                            (/= Option "-DTABLES_NEXT_TO_CODE")
-                            (snd (sPgm_a (settings dflags'))))
-                    , sPgm_l =
-                        ( fst (sPgm_l (settings dflags'))
-                        , filter
-                            (/= Option "-DTABLES_NEXT_TO_CODE")
-                            (snd (sPgm_l (settings dflags'))))
-                    }
               , integerLibrary = IntegerSimple
               , tablesNextToCode = False
               , hooks = h
               }
+        forceNoTablesNextToCode
         env <- getSession
         liftIO $ do
           oneShot env StopLn [(cmm_fn, Just CmmCpp) | cmm_fn <- cmm_fns]
