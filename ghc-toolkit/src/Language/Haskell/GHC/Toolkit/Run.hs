@@ -76,8 +76,21 @@ runHaskell Config {..} targets =
               , ghcLink = NoLink
               , settings =
                   (settings dflags')
-                    { sOpt_P =
-                        sOpt_P (settings dflags') <> ["-UTABLES_NEXT_TO_CODE"]
+                    { sPgm_c =
+                        ( fst (sPgm_c (settings dflags'))
+                        , filter
+                            (/= Option "-DTABLES_NEXT_TO_CODE")
+                            (snd (sPgm_c (settings dflags'))))
+                    , sPgm_a =
+                        ( fst (sPgm_a (settings dflags'))
+                        , filter
+                            (/= Option "-DTABLES_NEXT_TO_CODE")
+                            (snd (sPgm_a (settings dflags'))))
+                    , sPgm_l =
+                        ( fst (sPgm_l (settings dflags'))
+                        , filter
+                            (/= Option "-DTABLES_NEXT_TO_CODE")
+                            (snd (sPgm_l (settings dflags'))))
                     }
               , integerLibrary = IntegerSimple
               , tablesNextToCode = False
@@ -128,8 +141,21 @@ runCmm Config {..} cmm_fns =
               , ghcLink = NoLink
               , settings =
                   (settings dflags')
-                    { sOpt_P =
-                        sOpt_P (settings dflags') <> ["-UTABLES_NEXT_TO_CODE"]
+                    { sPgm_c =
+                        ( fst (sPgm_c (settings dflags'))
+                        , filter
+                            (/= Option "-DTABLES_NEXT_TO_CODE")
+                            (snd (sPgm_c (settings dflags'))))
+                    , sPgm_a =
+                        ( fst (sPgm_a (settings dflags'))
+                        , filter
+                            (/= Option "-DTABLES_NEXT_TO_CODE")
+                            (snd (sPgm_a (settings dflags'))))
+                    , sPgm_l =
+                        ( fst (sPgm_l (settings dflags'))
+                        , filter
+                            (/= Option "-DTABLES_NEXT_TO_CODE")
+                            (snd (sPgm_l (settings dflags'))))
                     }
               , integerLibrary = IntegerSimple
               , tablesNextToCode = False
