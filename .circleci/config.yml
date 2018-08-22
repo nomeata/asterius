@@ -7,7 +7,7 @@ jobs:
       - image: ubuntu:bionic
     environment:
       DEBIAN_FRONTEND: noninteractive
-      GHC_REV: 4d8fd08625c9af458f66e033fbc808c942d37633
+      GHC_REV: bd277ef6e49dc12159776e1d7b16bfdb18bddcf3
       JOBS: 9
       XZ_OPT: -9
     steps:
@@ -71,7 +71,7 @@ jobs:
     docker:
       - image: lambci/lambda:build-nodejs8.10
     environment:
-      GHC_REV: 4d8fd08625c9af458f66e033fbc808c942d37633
+      GHC_REV: bd277ef6e49dc12159776e1d7b16bfdb18bddcf3
       JOBS: 9
       XZ_OPT: -9
     steps:
