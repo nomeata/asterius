@@ -3,7 +3,7 @@ version: 0.0.1.{build}
 shallow_clone: true
 
 environment:
-  GHC_REV: 4d8fd08625c9af458f66e033fbc808c942d37633
+  GHC_REV: bd277ef6e49dc12159776e1d7b16bfdb18bddcf3
 
 build_script:
   - cmd: |
