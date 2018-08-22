@@ -8,7 +8,7 @@ import Data.List
 import DriverPhases
 import DriverPipeline
 import GHC
-import GhcPlugins
+import GhcPlugins hiding ((<>))
 import Language.Haskell.GHC.Toolkit.Compiler
 import Language.Haskell.GHC.Toolkit.Hooks
 import Panic
@@ -30,6 +30,12 @@ makeFrontendPlugin init_c =
                   setSessionDynFlags
                     dflags
                       { ghcLink = NoLink
+                      , settings =
+                          (settings dflags)
+                            { sOpt_P =
+                                sOpt_P (settings dflags) <>
+                                ["-UTABLES_NEXT_TO_CODE"]
+                            }
                       , integerLibrary = IntegerSimple
                       , tablesNextToCode = False
                       , hooks = h
@@ -41,7 +47,13 @@ makeFrontendPlugin init_c =
                    void $
                      setSessionDynFlags
                        dflags
-                         { integerLibrary = IntegerSimple
+                         { settings =
+                             (settings dflags)
+                               { sOpt_P =
+                                   sOpt_P (settings dflags) <>
+                                   ["-UTABLES_NEXT_TO_CODE"]
+                               }
+                         , integerLibrary = IntegerSimple
                          , tablesNextToCode = False
                          , hooks = h
                          }

@@ -74,6 +74,11 @@ runHaskell Config {..} targets =
             dflags'
               { ghcMode = CompManager
               , ghcLink = NoLink
+              , settings =
+                  (settings dflags')
+                    { sOpt_P =
+                        sOpt_P (settings dflags') <> ["-UTABLES_NEXT_TO_CODE"]
+                    }
               , integerLibrary = IntegerSimple
               , tablesNextToCode = False
               , hooks = h
@@ -121,6 +126,11 @@ runCmm Config {..} cmm_fns =
             dflags'
               { ghcMode = OneShot
               , ghcLink = NoLink
+              , settings =
+                  (settings dflags')
+                    { sOpt_P =
+                        sOpt_P (settings dflags') <> ["-UTABLES_NEXT_TO_CODE"]
+                    }
               , integerLibrary = IntegerSimple
               , tablesNextToCode = False
               , hooks = h
