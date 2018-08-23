@@ -31,11 +31,11 @@ makeFrontendPlugin init_c =
                   setSessionDynFlags
                     dflags
                       { ghcLink = NoLink
+                      , settings = settingsNoTablesNextToCode $ settings dflags
                       , integerLibrary = IntegerSimple
                       , tablesNextToCode = False
                       , hooks = h
                       }
-                forceNoTablesNextToCode
                 env <- getSession
                 liftIO $ oneShot env StopLn targets
               else do
@@ -43,7 +43,9 @@ makeFrontendPlugin init_c =
                    void $
                      setSessionDynFlags
                        dflags
-                         { integerLibrary = IntegerSimple
+                         { settings =
+                             settingsNoTablesNextToCode $ settings dflags
+                         , integerLibrary = IntegerSimple
                          , tablesNextToCode = False
                          , hooks = h
                          }
@@ -58,7 +60,6 @@ makeFrontendPlugin init_c =
                       , ldInputs =
                           map (FileOption "") o_files ++ ldInputs dflags
                       }
-                forceNoTablesNextToCode
                 traverse (uncurry GHC.guessTarget) hs_targets >>= setTargets
                 ok_flag <- load LoadAllTargets
                 when (failed ok_flag) $

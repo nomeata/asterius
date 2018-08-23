@@ -75,11 +75,11 @@ runHaskell Config {..} targets =
             dflags'
               { ghcMode = CompManager
               , ghcLink = NoLink
+              , settings = settingsNoTablesNextToCode $ settings dflags'
               , integerLibrary = IntegerSimple
               , tablesNextToCode = False
               , hooks = h
               }
-        forceNoTablesNextToCode
         traverse (`guessTarget` Nothing) targets >>= setTargets
         ok_flag <- load LoadAllTargets
         case ok_flag of
@@ -123,11 +123,11 @@ runCmm Config {..} cmm_fns =
             dflags'
               { ghcMode = OneShot
               , ghcLink = NoLink
+              , settings = settingsNoTablesNextToCode $ settings dflags'
               , integerLibrary = IntegerSimple
               , tablesNextToCode = False
               , hooks = h
               }
-        forceNoTablesNextToCode
         env <- getSession
         liftIO $ do
           oneShot env StopLn [(cmm_fn, Just CmmCpp) | cmm_fn <- cmm_fns]

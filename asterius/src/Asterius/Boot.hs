@@ -46,7 +46,8 @@ getDefaultBootArgs = do
   pure
     BootArgs
       { bootDir = dataDir </> ".boot"
-      , configureOptions = "--disable-split-objs --disable-split-sections -O2"
+      , configureOptions =
+          "--disable-split-objs --disable-split-sections -O2 --gcc-option=-UTABLES_NEXT_TO_CODE"
       , buildOptions = ""
       , installOptions = ""
       , builtinsOptions = builtins_opts
